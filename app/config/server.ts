@@ -26,6 +26,14 @@ declare global {
       AZURE_URL?: string; // https://{azure-url}/openai/deployments/{deploy-name}
       AZURE_API_KEY?: string;
       AZURE_API_VERSION?: string;
+
+      // Logto OIDC configuration
+      LOGTO_ENABLE?: string;
+      LOGTO_ENDPOINT?: string;
+      LOGTO_BASE_URL?: string;
+      LOGTO_APPID?: string;
+      LOGTO_SECRET?: string;
+      LOGTO_COOKIE_SECRET?: string;
     }
   }
 }
@@ -71,7 +79,7 @@ export const getServerSideConfig = () => {
   );
 
   return {
-    baseUrl: process.env.BASE_URL,
+    baseUrl: process.env.BASE_URL || "",
     apiKey,
     openaiOrgId: process.env.OPENAI_ORG_ID,
 
@@ -92,5 +100,11 @@ export const getServerSideConfig = () => {
     hideBalanceQuery: !process.env.ENABLE_BALANCE_QUERY,
     disableFastLink: !!process.env.DISABLE_FAST_LINK,
     customModels,
+    logtoEnable: process.env.LOGTO_ENABLE == "true",
+    logtoBaseURL: process.env.LOGTO_BASE_URL || "",
+    logtoEndpoint: process.env.LOGTO_ENDPOINT || "",
+    logtoAppID: process.env.LOGTO_APPID || "",
+    logtoAppSecret: process.env.LOGTO_SECRET || "",
+    logtoCookieSecret: process.env.LOGTO_COOKIE_SECRET || "",
   };
 };

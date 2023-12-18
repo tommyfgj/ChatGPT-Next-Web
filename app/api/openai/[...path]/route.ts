@@ -5,6 +5,7 @@ import { prettyObject } from "@/app/utils/format";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../auth";
 import { requestOpenai } from "../../common";
+import { logtoClient } from "@/app/lib/logto";
 
 const ALLOWD_PATH = new Set(Object.values(OpenaiPath));
 
@@ -24,6 +25,15 @@ async function handle(
   req: NextRequest,
   { params }: { params: { path: string[] } },
 ) {
+  const config = getServerSideConfig();
+  const { isAuthenticated, scopes } = await logtoClient.getLogtoContext(req);
+
+  if (config.logtoEndpoint && !isAuthenticated) {
+    return new Response(JSON.stringify({ message: "Unauthorized" }), {
+      status: 401,
+    });
+  }
+
   console.log("[OpenAI Route] params ", params);
 
   if (req.method === "OPTIONS") {
@@ -75,4 +85,22 @@ export const GET = handle;
 export const POST = handle;
 
 export const runtime = "edge";
-export const preferredRegion = ['arn1', 'bom1', 'cdg1', 'cle1', 'cpt1', 'dub1', 'fra1', 'gru1', 'hnd1', 'iad1', 'icn1', 'kix1', 'lhr1', 'pdx1', 'sfo1', 'sin1', 'syd1'];
+export const preferredRegion = [
+  "arn1",
+  "bom1",
+  "cdg1",
+  "cle1",
+  "cpt1",
+  "dub1",
+  "fra1",
+  "gru1",
+  "hnd1",
+  "iad1",
+  "icn1",
+  "kix1",
+  "lhr1",
+  "pdx1",
+  "sfo1",
+  "sin1",
+  "syd1",
+];
